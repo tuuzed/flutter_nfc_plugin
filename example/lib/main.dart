@@ -7,15 +7,28 @@ void log(String msg) => debugPrint(msg);
 
 class App extends StatelessWidget {
   App() {
-    NfcPlugin.onTagDiscovered().listen((onData) {
+    NfcPlugin.onTagDiscovered().listen((onData) async {
       log("onTagDiscovered: type= ${onData.type}");
       log("onTagDiscovered: success= ${onData.success}");
-      log("onTagDiscovered: id= ${onData.id}");
+      log("onTagDiscovered: hexId= ${onData.hexId}");
       log("onTagDiscovered: techList= ${onData.techList}");
       if (onData.dataList != null) {
-        onData.dataList.forEach((it) {
-          log("onTagDiscovered: dataList] sector=${it.sector},block=${it.block},data=${it.data}");
-        });
+        onData.dataList.forEach((it) => log(
+            "onTagDiscovered: dataList] sector=${it.sector},block=${it.block},hexData=${it.hexData}"));
+      }
+      if (onData.success) {
+        switch (onData.type) {
+          case TagResultType.none:
+            break;
+          case TagResultType.foundTag:
+            break;
+          case TagResultType.readTag:
+            await NfcPlugin.cancel();
+            break;
+          case TagResultType.writeTag:
+            await NfcPlugin.cancel();
+            break;
+        }
       }
     });
   }
@@ -46,6 +59,18 @@ class App extends StatelessWidget {
     log("_readTag: rst=$rst");
   }
 
+  void _writeTag() async {
+    var rst = await NfcPlugin.writeTag(args: [
+      WriteTagArg(
+          sector: 1, block: 0, hexData: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
+      WriteTagArg(
+          sector: 1, block: 1, hexData: "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB"),
+      WriteTagArg(
+          sector: 1, block: 2, hexData: "CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC"),
+    ]);
+    log("_writeTag: rst=$rst");
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -58,9 +83,22 @@ class App extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(child: Text("Enable"), onPressed: () => _enable()),
-              RaisedButton(child: Text("Disable"), onPressed: () => _disable()),
-              RaisedButton(child: Text("ReadTag"), onPressed: () => _readTag()),
+              RaisedButton(
+                child: Text("Enable"),
+                onPressed: () => _enable(),
+              ),
+              RaisedButton(
+                child: Text("Disable"),
+                onPressed: () => _disable(),
+              ),
+              RaisedButton(
+                child: Text("ReadTag"),
+                onPressed: () => _readTag(),
+              ),
+              RaisedButton(
+                child: Text("WriteTag"),
+                onPressed: () => _writeTag(),
+              ),
             ],
           ),
         ),

@@ -6,7 +6,7 @@ import './models.dart';
 
 export './models.dart';
 
-/// NFC插件,支持ISO14443规格标签读写
+/// NFC插件,支持ISO14443A规格标签读写
 class NfcPlugin {
   static const _CHANNEL_PREFIX = "com.tuuzed.flutternfcplugin";
   static const _METHOD_CHANNEL_NAME = "$_CHANNEL_PREFIX/MethodChannel";

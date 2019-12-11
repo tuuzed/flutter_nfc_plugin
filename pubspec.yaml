@@ -1,8 +1,8 @@
 name: nfc_plugin
 description: A Flutter Nfc plugin.
 version: 0.0.1
-author:
-homepage:
+author: tuuzed <liuyonghui.job@gmail.com>
+homepage: https://github.com/tuuzed/nfc_plugin
 
 environment:
   sdk: ">=2.1.0 <3.0.0"

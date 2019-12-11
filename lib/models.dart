@@ -3,13 +3,13 @@ class ReadTagArg {
     this.sector,
     this.block,
     this.keyType = KeyType.keyA,
-    this.key = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    this.hexKey = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
   });
 
   int sector;
   int block;
   KeyType keyType;
-  String key;
+  String hexKey;
 
   Map<String, dynamic> toMap() {
     var kt = "keyA";
@@ -25,7 +25,7 @@ class ReadTagArg {
       "sector": sector,
       "block": block,
       "keyType": kt,
-      "key": key,
+      "hexKey": hexKey,
     };
   }
 }
@@ -34,16 +34,16 @@ class WriteTagArg {
   WriteTagArg({
     this.sector,
     this.block,
-    this.data = "00000000000000000000000000000000",
+    this.hexData = "00000000000000000000000000000000",
     this.keyType = KeyType.keyA,
-    this.key = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
+    this.hexKey = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
   });
 
   int sector;
   int block;
-  String data;
+  String hexData;
   KeyType keyType;
-  String key;
+  String hexKey;
 
   Map<String, dynamic> toMap() {
     var kt = "keyA";
@@ -58,26 +58,26 @@ class WriteTagArg {
     return {
       "sector": sector,
       "block": block,
-      "data": data,
+      "hexData": hexData,
       "keyType": kt,
-      "key": key,
+      "hexKey": hexKey,
     };
   }
 }
 
 class TagResult {
-  TagResult({this.type, this.success, this.id, this.techList, this.dataList});
+  TagResult({this.type, this.success, this.hexId, this.techList, this.dataList});
 
   TagResultType type;
   bool success;
-  String id;
+  String hexId;
   List<String> techList;
   List<TagResultData> dataList;
 
   factory TagResult.formMap(map) {
     var rst = TagResult(
       success: map["success"],
-      id: map["id"],
+      hexId: map["hexId"],
       techList: map["techList"].split(","),
     );
     switch (map["type"]) {
@@ -103,17 +103,17 @@ class TagResult {
 }
 
 class TagResultData {
-  TagResultData({this.sector, this.block, this.data});
+  TagResultData({this.sector, this.block, this.hexData});
 
   int sector;
   int block;
-  String data;
+  String hexData;
 
   factory TagResultData.formMap(map) {
     return TagResultData(
       sector: map["sector"],
       block: map["block"],
-      data: map["data"],
+      hexData: map["hexData"],
     );
   }
 }

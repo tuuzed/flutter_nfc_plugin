@@ -61,7 +61,7 @@ class PluginHandlerImpl(
     private fun doHandleTag(tag: Tag) {
         val foundTag = mapOf(
                 "type" to TagResultType.foundTag.name,
-                "id" to HexStringUtils.bytesToHexString(tag.id),
+                "hexId" to HexStringUtils.bytesToHexString(tag.id),
                 "techList" to tag.techList.joinToString(","),
                 "success" to true
         )
@@ -80,12 +80,12 @@ class PluginHandlerImpl(
                     dataList.add(mapOf(
                             "sector" to arg.sector,
                             "block" to arg.block,
-                            "data" to HexStringUtils.bytesToHexString(rst)
+                            "hexData" to HexStringUtils.bytesToHexString(rst)
                     ))
                 } else {
                     sink?.success(mapOf(
                             "type" to TagResultType.readTag.name,
-                            "id" to HexStringUtils.bytesToHexString(tag.id),
+                            "hexId" to HexStringUtils.bytesToHexString(tag.id),
                             "techList" to tag.techList.joinToString(","),
                             "success" to false
                     ))
@@ -94,7 +94,7 @@ class PluginHandlerImpl(
             }
             sink?.success(mapOf(
                     "type" to TagResultType.readTag.name,
-                    "id" to HexStringUtils.bytesToHexString(tag.id),
+                    "hexId" to HexStringUtils.bytesToHexString(tag.id),
                     "techList" to tag.techList.joinToString(","),
                     "success" to true,
                     "dataList" to dataList
@@ -112,7 +112,7 @@ class PluginHandlerImpl(
                 if (rst == null || !rst) {
                     sink?.success(mapOf(
                             "type" to TagResultType.writeTag.name,
-                            "id" to HexStringUtils.bytesToHexString(tag.id),
+                            "hexId" to HexStringUtils.bytesToHexString(tag.id),
                             "techList" to tag.techList.joinToString(","),
                             "success" to false
                     ))
@@ -121,7 +121,7 @@ class PluginHandlerImpl(
             }
             sink?.success(mapOf(
                     "type" to TagResultType.writeTag.name,
-                    "id" to HexStringUtils.bytesToHexString(tag.id),
+                    "hexId" to HexStringUtils.bytesToHexString(tag.id),
                     "techList" to tag.techList.joinToString(","),
                     "success" to true
             ))
@@ -150,7 +150,7 @@ class PluginHandlerImpl(
             val sector = it["sector"] as Int?
             val block = it["block"] as Int?
             val keyType = (it["keyType"] as String?)?.let { kt -> KeyType.valueOf(kt) }
-            val key = it["key"] as String?
+            val hexKey = it["hexKey"] as String?
             if (sector == null) {
                 log(TAG, "sector == null")
                 result.success(false)
@@ -166,12 +166,12 @@ class PluginHandlerImpl(
                 result.success(false)
                 return
             }
-            if (key == null) {
-                log(TAG, "key == null")
+            if (hexKey == null) {
+                log(TAG, "hexKey == null")
                 result.success(false)
                 return
             }
-            ReadTagArg(sector, block, keyType, key)
+            ReadTagArg(sector, block, keyType, hexKey)
         }
         runOnUiThread {
             args.readTagArgs = readTagArgs
@@ -186,8 +186,8 @@ class PluginHandlerImpl(
             val sector = it["sector"] as Int?
             val block = it["block"] as Int?
             val keyType = (it["keyType"] as String?)?.let { kt -> KeyType.valueOf(kt) }
-            val key = it["key"] as String?
-            val data = it["data"] as String?
+            val hexKey = it["hexKey"] as String?
+            val hexData = it["hexData"] as String?
             if (sector == null) {
                 log(TAG, "sector == null")
                 result.success(false)
@@ -203,17 +203,17 @@ class PluginHandlerImpl(
                 result.success(false)
                 return
             }
-            if (key == null) {
-                log(TAG, "key == null")
+            if (hexKey == null) {
+                log(TAG, "hexKey == null")
                 result.success(false)
                 return
             }
-            if (data == null) {
-                log(TAG, "data == null")
+            if (hexData == null) {
+                log(TAG, "hexData == null")
                 result.success(false)
                 return
             }
-            WriteTagArg(sector, block, data, keyType, key)
+            WriteTagArg(sector, block, hexData, keyType, hexKey)
         }
         runOnUiThread {
             args.readTagArgs = emptyList()
