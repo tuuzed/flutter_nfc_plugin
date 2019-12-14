@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:nfc_plugin/nfc_plugin.dart';
 
@@ -5,9 +6,20 @@ void main() => runApp(App());
 
 void log(String msg) => debugPrint(msg);
 
-class App extends StatelessWidget {
-  App() {
-    NfcPlugin.onTagDiscovered().listen((onData) async {
+class App extends StatefulWidget {
+  App({Key key}) : super(key: key);
+
+  @override
+  _AppState createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  StreamSubscription<TagResult> _streamSubscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _streamSubscription = NfcPlugin.onTagDiscovered().listen((onData) async {
       log("onTagDiscovered: type= ${onData.type}");
       log("onTagDiscovered: success= ${onData.success}");
       log("onTagDiscovered: hexId= ${onData.hexId}");
@@ -31,6 +43,12 @@ class App extends StatelessWidget {
         }
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
   }
 
   void _enable() async {
