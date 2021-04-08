@@ -7,8 +7,8 @@ import './models.dart';
 export './models.dart';
 
 /// NFC插件,支持ISO14443A规格标签读写
-class NfcPlugin {
-  static const _CHANNEL_PREFIX = "com.tuuzed.flutternfcplugin";
+class FlutterNfcPlugin {
+  static const _CHANNEL_PREFIX = "io.github.tuuzed.flutter_nfc_plugin";
   static const _METHOD_CHANNEL_NAME = "$_CHANNEL_PREFIX/MethodChannel";
   static const _EVENT_CHANNEL_NAME = "$_CHANNEL_PREFIX/EventChannel";
 

@@ -66,7 +66,8 @@ class WriteTagArg {
 }
 
 class TagResult {
-  TagResult({this.type, this.success, this.hexId, this.techList, this.dataList});
+  TagResult(
+      {this.type, this.success, this.hexId, this.techList, this.dataList});
 
   TagResultType type;
   bool success;

@@ -1,32 +1,40 @@
-@file:Suppress("EnumEntryName")
+package io.github.tuuzed.flutter_nfc_plugin
 
-package com.tuuzed.flutternfcplugin
-
+import android.app.Activity
+import android.content.Context
 import android.nfc.NfcAdapter
 import android.nfc.Tag
+import android.os.Handler
+import android.os.Looper
 import androidx.annotation.Keep
 import androidx.annotation.UiThread
-import com.tuuzed.flutternfcplugin.internal.HexStringUtils
-import com.tuuzed.flutternfcplugin.internal.log
-import com.tuuzed.flutternfcplugin.tech.ISO14443A
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.flutter.plugin.common.PluginRegistry
+import io.github.tuuzed.flutter_nfc_plugin.internal.HexStringUtils
+import io.github.tuuzed.flutter_nfc_plugin.internal.log
+import io.github.tuuzed.flutter_nfc_plugin.tech.ISO14443A
 
 @Suppress("UNUSED_PARAMETER")
-class PluginHandlerImpl(
-        private val registrar: PluginRegistry.Registrar
+class PluginHandler(
+        applicationContext: Context,
+        private val getActivity: () -> Activity?
 ) : MethodChannel.MethodCallHandler, EventChannel.StreamHandler, NfcAdapter.ReaderCallback {
 
     companion object {
         private const val TAG = "NfcPlugin"
     }
 
-    private val host get() = registrar.activity()
-    private val nfcAdapter = NfcAdapter.getDefaultAdapter(this.host)
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val nfcAdapter = NfcAdapter.getDefaultAdapter(applicationContext)
 
-    private inline fun runOnUiThread(crossinline block: () -> Unit) = host.runOnUiThread { block() }
+    private inline fun runOnUiThread(crossinline block: () -> Unit) {
+        if (Looper.myLooper() == Looper.getMainLooper()) {
+            block()
+        } else {
+            mainHandler.post { block() }
+        }
+    }
 
     private var args = Args()
     private var sink: EventChannel.EventSink? = null
@@ -136,12 +144,24 @@ class PluginHandlerImpl(
             result.success(false)
             return
         }
-        nfcAdapter.enableReaderMode(host, this, flags, null)
+        val activity = getActivity()
+        if (activity == null) {
+            log(TAG, "activity == null")
+            result.success(false)
+            return
+        }
+        nfcAdapter.enableReaderMode(activity, this, flags, null)
         result.success(true)
     }
 
     private fun disableReaderMode(call: MethodCall, result: MethodChannel.Result) {
-        nfcAdapter.disableReaderMode(host)
+        val activity = getActivity()
+        if (activity == null) {
+            log(TAG, "activity == null")
+            result.success(false)
+            return
+        }
+        nfcAdapter.disableReaderMode(activity)
         result.success(true)
     }
 

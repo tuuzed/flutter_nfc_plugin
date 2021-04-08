@@ -1,6 +1,7 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
-import 'package:nfc_plugin/nfc_plugin.dart';
+import 'package:flutter_nfc_plugin/flutter_nfc_plugin.dart';
 
 void main() => runApp(App());
 
@@ -19,7 +20,8 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    _streamSubscription = NfcPlugin.onTagDiscovered().listen((onData) async {
+    _streamSubscription =
+        FlutterNfcPlugin.onTagDiscovered().listen((onData) async {
       log("onTagDiscovered: type= ${onData.type}");
       log("onTagDiscovered: success= ${onData.success}");
       log("onTagDiscovered: hexId= ${onData.hexId}");
@@ -35,10 +37,10 @@ class _AppState extends State<App> {
           case TagResultType.foundTag:
             break;
           case TagResultType.readTag:
-            await NfcPlugin.cancel();
+            await FlutterNfcPlugin.cancel();
             break;
           case TagResultType.writeTag:
-            await NfcPlugin.cancel();
+            await FlutterNfcPlugin.cancel();
             break;
         }
       }
@@ -52,17 +54,17 @@ class _AppState extends State<App> {
   }
 
   void _enable() async {
-    var flags = NfcPlugin.FLAG_READER_NFC_A |
-        NfcPlugin.FLAG_READER_NFC_B |
-        NfcPlugin.FLAG_READER_NFC_V |
-        NfcPlugin.FLAG_READER_NFC_F |
-        NfcPlugin.FLAG_READER_NFC_BARCODE;
-    var rst = await NfcPlugin.enableReaderMode(flags: flags);
+    var flags = FlutterNfcPlugin.FLAG_READER_NFC_A |
+        FlutterNfcPlugin.FLAG_READER_NFC_B |
+        FlutterNfcPlugin.FLAG_READER_NFC_V |
+        FlutterNfcPlugin.FLAG_READER_NFC_F |
+        FlutterNfcPlugin.FLAG_READER_NFC_BARCODE;
+    var rst = await FlutterNfcPlugin.enableReaderMode(flags: flags);
     log("_enable: rst=$rst");
   }
 
   void _disable() async {
-    var rst = await NfcPlugin.disableReaderMode();
+    var rst = await FlutterNfcPlugin.disableReaderMode();
     log("_disable: rst=$rst");
   }
 
@@ -73,12 +75,12 @@ class _AppState extends State<App> {
         args.add(ReadTagArg(sector: i, block: j));
       }
     }
-    var rst = await NfcPlugin.readTag(args: args);
+    var rst = await FlutterNfcPlugin.readTag(args: args);
     log("_readTag: rst=$rst");
   }
 
   void _writeTag() async {
-    var rst = await NfcPlugin.writeTag(args: [
+    var rst = await FlutterNfcPlugin.writeTag(args: [
       WriteTagArg(
           sector: 1, block: 0, hexData: "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"),
       WriteTagArg(
@@ -101,19 +103,19 @@ class _AppState extends State<App> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Enable"),
                 onPressed: () => _enable(),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("Disable"),
                 onPressed: () => _disable(),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("ReadTag"),
                 onPressed: () => _readTag(),
               ),
-              RaisedButton(
+              ElevatedButton(
                 child: Text("WriteTag"),
                 onPressed: () => _writeTag(),
               ),

@@ -1,9 +1,9 @@
-package com.tuuzed.flutternfcplugin.tech
+package io.github.tuuzed.flutter_nfc_plugin.tech
 
 import android.nfc.Tag
 import android.nfc.tech.MifareClassic
-import com.tuuzed.flutternfcplugin.internal.close
-import com.tuuzed.flutternfcplugin.internal.log
+import io.github.tuuzed.flutter_nfc_plugin.internal.close
+import io.github.tuuzed.flutter_nfc_plugin.internal.log
 import java.io.IOException
 
 

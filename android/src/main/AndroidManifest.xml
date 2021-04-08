@@ -1,6 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tuuzed.flutternfcplugin">
+    package="io.github.tuuzed.flutter_nfc_plugin">
 
     <uses-permission android:name="android.permission.NFC" />
-
 </manifest>

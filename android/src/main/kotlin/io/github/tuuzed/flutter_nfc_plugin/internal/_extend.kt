@@ -1,6 +1,6 @@
 @file:JvmName("-ExtendKt")
 
-package com.tuuzed.flutternfcplugin.internal
+package io.github.tuuzed.flutter_nfc_plugin.internal
 
 import android.util.Log
 import java.io.Closeable

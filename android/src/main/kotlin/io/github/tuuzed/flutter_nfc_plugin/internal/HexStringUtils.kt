@@ -1,4 +1,4 @@
-package com.tuuzed.flutternfcplugin.internal
+package io.github.tuuzed.flutter_nfc_plugin.internal
 
 import java.util.*
 
