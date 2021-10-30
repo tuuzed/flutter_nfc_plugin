@@ -5,9 +5,9 @@
 Pod::Spec.new do |s|
   s.name             = 'flutter_nfc_plugin'
   s.version          = '0.0.1'
-  s.summary          = 'A new Flutter plugin.'
+  s.summary          = 'flutter nfc plugin'
   s.description      = <<-DESC
-A new Flutter plugin.
+flutter nfc plugin
                        DESC
   s.homepage         = 'http://example.com'
   s.license          = { :file => '../LICENSE' }

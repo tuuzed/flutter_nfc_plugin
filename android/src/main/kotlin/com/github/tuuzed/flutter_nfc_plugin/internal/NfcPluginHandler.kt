@@ -1,4 +1,4 @@
-package io.github.tuuzed.flutter_nfc_plugin
+package com.github.tuuzed.flutter_nfc_plugin.internal
 
 import android.app.Activity
 import android.content.Context
@@ -8,17 +8,14 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.Keep
 import androidx.annotation.UiThread
+import com.github.tuuzed.flutter_nfc_plugin.internal.tech.ISO14443A
 import io.flutter.plugin.common.EventChannel
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
-import io.github.tuuzed.flutter_nfc_plugin.internal.HexStringUtils
-import io.github.tuuzed.flutter_nfc_plugin.internal.log
-import io.github.tuuzed.flutter_nfc_plugin.tech.ISO14443A
 
-@Suppress("UNUSED_PARAMETER")
-class PluginHandler(
-        applicationContext: Context,
-        private val getActivity: () -> Activity?
+class NfcPluginHandler(
+    applicationContext: Context,
+    private val activityProvider: () -> Activity?
 ) : MethodChannel.MethodCallHandler, EventChannel.StreamHandler, NfcAdapter.ReaderCallback {
 
     companion object {
@@ -43,10 +40,10 @@ class PluginHandler(
         log(TAG, "call: ${call.method}, args: ${call.arguments}")
         when (call.method) {
             "enableReaderMode" -> enableReaderMode(call, result)
-            "disableReaderMode" -> disableReaderMode(call, result)
+            "disableReaderMode" -> disableReaderMode(result)
             "readTag" -> readTag(call, result)
             "writeTag" -> writeTag(call, result)
-            "cancel" -> cancel(call, result)
+            "cancel" -> cancel(result)
             else -> result.notImplemented()
         }
     }
@@ -68,10 +65,10 @@ class PluginHandler(
     @UiThread
     private fun doHandleTag(tag: Tag) {
         val foundTag = mapOf(
-                "type" to TagResultType.foundTag.name,
-                "hexId" to HexStringUtils.bytesToHexString(tag.id),
-                "techList" to tag.techList.joinToString(","),
-                "success" to true
+            "type" to TagResultType.foundTag.name,
+            "hexId" to HexStringUtils.bytesToHexString(tag.id),
+            "techList" to tag.techList.joinToString(","),
+            "success" to true
         )
         log(TAG, "toFlutter: $foundTag")
         sink?.success(foundTag)
@@ -85,28 +82,34 @@ class PluginHandler(
                     KeyType.keyB -> ISO14443A.readByKeyB(tag, arg.sector, arg.block, key)
                 }
                 if (rst != null) {
-                    dataList.add(mapOf(
+                    dataList.add(
+                        mapOf(
                             "sector" to arg.sector,
                             "block" to arg.block,
                             "hexData" to HexStringUtils.bytesToHexString(rst)
-                    ))
+                        )
+                    )
                 } else {
-                    sink?.success(mapOf(
+                    sink?.success(
+                        mapOf(
                             "type" to TagResultType.readTag.name,
                             "hexId" to HexStringUtils.bytesToHexString(tag.id),
                             "techList" to tag.techList.joinToString(","),
                             "success" to false
-                    ))
+                        )
+                    )
                     return
                 }
             }
-            sink?.success(mapOf(
+            sink?.success(
+                mapOf(
                     "type" to TagResultType.readTag.name,
                     "hexId" to HexStringUtils.bytesToHexString(tag.id),
                     "techList" to tag.techList.joinToString(","),
                     "success" to true,
                     "dataList" to dataList
-            ))
+                )
+            )
             return
         }
         if (args.writeTagArgs.isNotEmpty()) {
@@ -118,21 +121,25 @@ class PluginHandler(
                     KeyType.keyB -> ISO14443A.writeByKeyB(tag, arg.sector, arg.block, key, data)
                 }
                 if (rst == null || !rst) {
-                    sink?.success(mapOf(
+                    sink?.success(
+                        mapOf(
                             "type" to TagResultType.writeTag.name,
                             "hexId" to HexStringUtils.bytesToHexString(tag.id),
                             "techList" to tag.techList.joinToString(","),
                             "success" to false
-                    ))
+                        )
+                    )
                     return
                 }
             }
-            sink?.success(mapOf(
+            sink?.success(
+                mapOf(
                     "type" to TagResultType.writeTag.name,
                     "hexId" to HexStringUtils.bytesToHexString(tag.id),
                     "techList" to tag.techList.joinToString(","),
                     "success" to true
-            ))
+                )
+            )
             return
         }
     }
@@ -144,7 +151,7 @@ class PluginHandler(
             result.success(false)
             return
         }
-        val activity = getActivity()
+        val activity = activityProvider()
         if (activity == null) {
             log(TAG, "activity == null")
             result.success(false)
@@ -154,8 +161,8 @@ class PluginHandler(
         result.success(true)
     }
 
-    private fun disableReaderMode(call: MethodCall, result: MethodChannel.Result) {
-        val activity = getActivity()
+    private fun disableReaderMode(result: MethodChannel.Result) {
+        val activity = activityProvider()
         if (activity == null) {
             log(TAG, "activity == null")
             result.success(false)
@@ -243,7 +250,7 @@ class PluginHandler(
         }
     }
 
-    private fun cancel(call: MethodCall, result: MethodChannel.Result) {
+    private fun cancel(result: MethodChannel.Result) {
         runOnUiThread {
             args.readTagArgs = emptyList()
             args.writeTagArgs = emptyList()
@@ -254,37 +261,35 @@ class PluginHandler(
 
     @Keep
     private data class Args(
-            var cancel: Boolean = true,
-            var readTagArgs: List<ReadTagArg> = emptyList(),
-            var writeTagArgs: List<WriteTagArg> = emptyList()
+        var cancel: Boolean = true,
+        var readTagArgs: List<ReadTagArg> = emptyList(),
+        var writeTagArgs: List<WriteTagArg> = emptyList()
     )
 
     @Keep
     private data class ReadTagArg(
-            var sector: Int,
-            var block: Int,
-            var keyType: KeyType,
-            var key: String
+        var sector: Int,
+        var block: Int,
+        var keyType: KeyType,
+        var key: String
     )
 
     @Keep
     private data class WriteTagArg(
-            var sector: Int,
-            var block: Int,
-            var data: String,
-            var keyType: KeyType,
-            var key: String
+        var sector: Int,
+        var block: Int,
+        var data: String,
+        var keyType: KeyType,
+        var key: String
     )
 
+    @Suppress("EnumEntryName")
     @Keep
-    private enum class TagResultType {
-        foundTag, readTag, writeTag
-    }
+    private enum class TagResultType { foundTag, readTag, writeTag }
 
+    @Suppress("EnumEntryName")
     @Keep
-    private enum class KeyType {
-        keyA, keyB
-    }
+    private enum class KeyType { keyA, keyB }
 
 
 }

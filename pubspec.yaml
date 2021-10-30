@@ -1,11 +1,10 @@
 name: flutter_nfc_plugin
-description: A new Flutter plugin.
+description: flutter nfc plugin
 version: 0.0.1
-author:
 homepage:
 
 environment:
-  sdk: ">=2.7.0 <3.0.0"
+  sdk: ">=2.12.0 <3.0.0"
   flutter: ">=1.20.0"
 
 dependencies:
@@ -15,6 +14,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_lints: ^1.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -28,7 +28,7 @@ flutter:
   plugin:
     platforms:
       android:
-        package: io.github.tuuzed.flutter_nfc_plugin
+        package: com.github.tuuzed.flutter_nfc_plugin
         pluginClass: FlutterNfcPlugin
       ios:
         pluginClass: FlutterNfcPlugin

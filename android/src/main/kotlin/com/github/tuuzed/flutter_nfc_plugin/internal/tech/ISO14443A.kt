@@ -1,11 +1,10 @@
-package io.github.tuuzed.flutter_nfc_plugin.tech
+package com.github.tuuzed.flutter_nfc_plugin.internal.tech
 
 import android.nfc.Tag
 import android.nfc.tech.MifareClassic
-import io.github.tuuzed.flutter_nfc_plugin.internal.close
-import io.github.tuuzed.flutter_nfc_plugin.internal.log
+import com.github.tuuzed.flutter_nfc_plugin.internal.close
+import com.github.tuuzed.flutter_nfc_plugin.internal.log
 import java.io.IOException
-
 
 object ISO14443A {
 
@@ -32,7 +31,13 @@ object ISO14443A {
         }
     }
 
-    fun writeByKeyA(tag: Tag, sector: Int, block: Int, accessKey: ByteArray, data16bytes: ByteArray): Boolean? {
+    fun writeByKeyA(
+        tag: Tag,
+        sector: Int,
+        block: Int,
+        accessKey: ByteArray,
+        data16bytes: ByteArray
+    ): Boolean? {
         val mc = MifareClassic.get(tag)
         log(TAG, "writeByKeyA: mc=$mc")
         mc ?: return null
@@ -73,7 +78,13 @@ object ISO14443A {
         }
     }
 
-    fun writeByKeyB(tag: Tag, sector: Int, block: Int, accessKey: ByteArray, data16bytes: ByteArray): Boolean? {
+    fun writeByKeyB(
+        tag: Tag,
+        sector: Int,
+        block: Int,
+        accessKey: ByteArray,
+        data16bytes: ByteArray
+    ): Boolean? {
         val mc = MifareClassic.get(tag)
         log(TAG, "writeByKeyB: mc=$mc")
         mc ?: return null
@@ -93,6 +104,5 @@ object ISO14443A {
             close(mc)
         }
     }
-
 
 }

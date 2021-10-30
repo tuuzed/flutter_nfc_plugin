@@ -1,6 +1,6 @@
 # flutter_nfc_plugin
 
-A new Flutter plugin.
+flutter nfc plugin
 
 ## Getting Started
 

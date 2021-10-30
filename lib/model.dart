@@ -1,7 +1,12 @@
+part of 'flutter_nfc_plugin.dart';
+
+enum TagResultType { none, foundTag, readTag, writeTag }
+enum KeyType { keyA, keyB }
+
 class ReadTagArg {
   ReadTagArg({
-    this.sector,
-    this.block,
+    required this.sector,
+    required this.block,
     this.keyType = KeyType.keyA,
     this.hexKey = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
   });
@@ -32,8 +37,8 @@ class ReadTagArg {
 
 class WriteTagArg {
   WriteTagArg({
-    this.sector,
-    this.block,
+    required this.sector,
+    required this.block,
     this.hexData = "00000000000000000000000000000000",
     this.keyType = KeyType.keyA,
     this.hexKey = "FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF",
@@ -66,8 +71,13 @@ class WriteTagArg {
 }
 
 class TagResult {
-  TagResult(
-      {this.type, this.success, this.hexId, this.techList, this.dataList});
+  TagResult({
+    required this.type,
+    required this.success,
+    required this.hexId,
+    required this.techList,
+    required this.dataList,
+  });
 
   TagResultType type;
   bool success;
@@ -76,35 +86,44 @@ class TagResult {
   List<TagResultData> dataList;
 
   factory TagResult.formMap(map) {
-    var rst = TagResult(
+    late final TagResultType type;
+    late final List<TagResultData> dataList;
+    switch (map["type"]) {
+      case "foundTag":
+        type = TagResultType.foundTag;
+        break;
+      case "readTag":
+        type = TagResultType.readTag;
+        break;
+      case "writeTag":
+        type = TagResultType.writeTag;
+        break;
+      default:
+        type = TagResultType.none;
+        break;
+    }
+    if (map["dataList"] is List) {
+      dataList =
+          map["dataList"].map((it) => TagResultData.formMap(it)).toList();
+    } else {
+      dataList = [];
+    }
+    return TagResult(
+      type: type,
       success: map["success"],
       hexId: map["hexId"],
       techList: map["techList"].split(","),
+      dataList: dataList,
     );
-    switch (map["type"]) {
-      case "foundTag":
-        rst.type = TagResultType.foundTag;
-        break;
-      case "readTag":
-        rst.type = TagResultType.readTag;
-        break;
-      case "writeTag":
-        rst.type = TagResultType.writeTag;
-        break;
-      default:
-        rst.type = TagResultType.none;
-        break;
-    }
-    var dataList = map["dataList"];
-    if (dataList != null && dataList is List) {
-      rst.dataList = dataList.map((it) => TagResultData.formMap(it)).toList();
-    }
-    return rst;
   }
 }
 
 class TagResultData {
-  TagResultData({this.sector, this.block, this.hexData});
+  TagResultData({
+    required this.sector,
+    required this.block,
+    required this.hexData,
+  });
 
   int sector;
   int block;
@@ -118,6 +137,3 @@ class TagResultData {
     );
   }
 }
-
-enum TagResultType { none, foundTag, readTag, writeTag }
-enum KeyType { keyA, keyB }

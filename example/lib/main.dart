@@ -3,19 +3,19 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_nfc_plugin/flutter_nfc_plugin.dart';
 
-void main() => runApp(App());
-
 void log(String msg) => debugPrint(msg);
 
+void main() => runApp(const App());
+
 class App extends StatefulWidget {
-  App({Key key}) : super(key: key);
+  const App({Key? key}) : super(key: key);
 
   @override
   _AppState createState() => _AppState();
 }
 
 class _AppState extends State<App> {
-  StreamSubscription<TagResult> _streamSubscription;
+  StreamSubscription<TagResult>? _streamSubscription;
 
   @override
   void initState() {
@@ -26,9 +26,8 @@ class _AppState extends State<App> {
       log("onTagDiscovered: success= ${onData.success}");
       log("onTagDiscovered: hexId= ${onData.hexId}");
       log("onTagDiscovered: techList= ${onData.techList}");
-      if (onData.dataList != null) {
-        onData.dataList.forEach((it) => log(
-            "onTagDiscovered: dataList] sector=${it.sector},block=${it.block},hexData=${it.hexData}"));
+      for (var it in onData.dataList) {
+        log("onTagDiscovered: dataList] sector=${it.sector},block=${it.block},hexData=${it.hexData}");
       }
       if (onData.success) {
         switch (onData.type) {
@@ -104,19 +103,19 @@ class _AppState extends State<App> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               ElevatedButton(
-                child: Text("Enable"),
+                child: const Text("Enable"),
                 onPressed: () => _enable(),
               ),
               ElevatedButton(
-                child: Text("Disable"),
+                child: const Text("Disable"),
                 onPressed: () => _disable(),
               ),
               ElevatedButton(
-                child: Text("ReadTag"),
+                child: const Text("ReadTag"),
                 onPressed: () => _readTag(),
               ),
               ElevatedButton(
-                child: Text("WriteTag"),
+                child: const Text("WriteTag"),
                 onPressed: () => _writeTag(),
               ),
             ],

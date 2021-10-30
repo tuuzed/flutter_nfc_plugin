@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:flutter_nfc_plugin/flutter_nfc_plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -8,11 +9,15 @@ void main() {
 
   setUp(() {
     channel.setMockMethodCallHandler((MethodCall methodCall) async {
-      return '42';
+      return 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF';
     });
   });
 
   tearDown(() {
     channel.setMockMethodCallHandler(null);
+  });
+
+  test('FlutterNfcPlugin', () async {
+    expect(FlutterNfcPlugin.DEFAULT_KEY, 'FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF');
   });
 }
