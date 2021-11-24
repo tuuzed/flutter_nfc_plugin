@@ -12,7 +12,7 @@ import io.flutter.plugin.common.MethodChannel
 class FlutterNfcPlugin : FlutterPlugin, ActivityAware {
 
     companion object {
-        private const val CHANNEL_PREFIX = "com..github.tuuzed.flutter_nfc_plugin"
+        private const val CHANNEL_PREFIX = "com.github.tuuzed.flutter_nfc_plugin"
 
         /** 方法通道 */
         private const val METHOD_CHANNEL_NAME = "$CHANNEL_PREFIX/MethodChannel"
